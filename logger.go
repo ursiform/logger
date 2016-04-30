@@ -8,45 +8,142 @@ import (
 )
 
 const (
-	Silent = iota
-	Error  = iota
-	Warn   = iota
-	Listen = iota
-	Init   = iota
-	Info   = iota
-	Debug  = iota
-	max    = iota
+	Silent  = iota
+	Error   = iota
+	Blocked = iota
+	Warn    = iota
+	Listen  = iota
+	Install = iota
+	Init    = iota
+	Request = iota
+	Info    = iota
+	Debug   = iota
+	max     = iota
 )
 
-type Logger struct{ Level int }
+type Logger struct{ level int }
+
+var LogLevel = map[string]int{
+	"silent":  Silent,
+	"error":   Error,
+	"blocked": Blocked,
+	"warn":    Warn,
+	"listen":  Listen,
+	"install": Install,
+	"init":    Init,
+	"request": Request,
+	"info":    Info,
+	"debug":   Debug}
 
 var prefixes = [...]string{
 	"",
 	ansi.Color("[***error***]", "black+B:red"),
+	ansi.Color("[**blocked**]", "255+Bb:165"),
 	ansi.Color("[**warning**]", "red:yellow+h"),
 	ansi.Color("[ listening ]", "black:cyan+h"),
+	/*      */ "[ installed ]",
 	/*      */ "[initialized]",
+	/*      */ "[  request  ]",
 	/*      */ "[information]",
 	/*      */ "[   debug   ]"}
 
-func (logger *Logger) Log(level int, message string) {
-	if logger.Level == Silent {
+func out(loggerLevel, messageLevel int, format string, v ...interface{}) {
+	if loggerLevel == Silent || messageLevel == Silent {
 		return
 	}
-	// If an invalid Level has been set, output an error and the message as info.
-	if logger.Level > Debug {
-		log.Printf("%s logger.Level must be < %d", prefixes[Error], max)
-		log.Printf("%s %s", prefixes[Info], message)
-		return
-	}
-	if 0 <= level && level <= logger.Level {
-		log.Printf("%s %s", prefixes[level], message)
+	message := fmt.Sprintf(format, v...)
+	if messageLevel > Silent && messageLevel <= loggerLevel {
+		log.Printf("%s %s", prefixes[messageLevel], message)
 	}
 }
 
-func New(level int) (*Logger, error) {
-	if level > Debug {
-		return nil, fmt.Errorf("logger.Level must be < %d", max)
+func (logger *Logger) Level() int { return logger.level }
+
+func (logger *Logger) SetLevel(level int) error {
+	if level > Debug || level < Silent {
+		return fmt.Errorf("logger level must be >= %d and < %d", Silent, max)
 	}
-	return &Logger{Level: level}, nil
+	logger.level = level
+	return nil
+}
+
+func (logger *Logger) Error(format string, v ...interface{}) {
+	out(logger.level, Error, format, v...)
+}
+
+func (logger *Logger) Blocked(format string, v ...interface{}) {
+	out(logger.level, Blocked, format, v...)
+}
+
+func (logger *Logger) Warn(format string, v ...interface{}) {
+	out(logger.level, Warn, format, v...)
+}
+
+func (logger *Logger) Listen(format string, v ...interface{}) {
+	out(logger.level, Listen, format, v...)
+}
+
+func (logger *Logger) Install(format string, v ...interface{}) {
+	out(logger.level, Install, format, v...)
+}
+
+func (logger *Logger) Init(format string, v ...interface{}) {
+	out(logger.level, Init, format, v...)
+}
+
+func (logger *Logger) Request(format string, v ...interface{}) {
+	out(logger.level, Request, format, v...)
+}
+
+func (logger *Logger) Info(format string, v ...interface{}) {
+	out(logger.level, Info, format, v...)
+}
+
+func (logger *Logger) Debug(format string, v ...interface{}) {
+	out(logger.level, Debug, format, v...)
+}
+
+func MustError(format string, v ...interface{}) {
+	out(max, Error, format, v...)
+}
+
+func MustBlocked(format string, v ...interface{}) {
+	out(max, Blocked, format, v...)
+}
+
+func MustWarn(format string, v ...interface{}) {
+	out(max, Warn, format, v...)
+}
+
+func MustListen(format string, v ...interface{}) {
+	out(max, Listen, format, v...)
+}
+
+func MustInstall(format string, v ...interface{}) {
+	out(max, Install, format, v...)
+}
+
+func MustInit(format string, v ...interface{}) {
+	out(max, Init, format, v...)
+}
+
+func MustRequest(format string, v ...interface{}) {
+	out(max, Request, format, v...)
+}
+
+func MustInfo(format string, v ...interface{}) {
+	out(max, Info, format, v...)
+}
+
+func MustDebug(format string, v ...interface{}) {
+	out(max, Debug, format, v...)
+}
+
+func New(level int) (*Logger, error) {
+	logger := new(Logger)
+	if err := logger.SetLevel(level); err != nil {
+		return nil, err
+	} else {
+		return logger, nil
+	}
 }
