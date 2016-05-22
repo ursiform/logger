@@ -1,3 +1,9 @@
+// Copyright 2016 Afshin Darian. All rights reserved.
+// Use of this source code is governed by The MIT License
+// that can be found in the LICENSE file.
+
+// Package logger provides a simple logging interface that supports multiple
+// levels of logging. It goes up to 11.
 package logger
 
 import (
@@ -12,6 +18,7 @@ const (
 	Error   = iota
 	Blocked = iota
 	Warn    = iota
+	Reject  = iota
 	Listen  = iota
 	Install = iota
 	Init    = iota
@@ -28,6 +35,7 @@ var LogLevel = map[string]int{
 	"error":   Error,
 	"blocked": Blocked,
 	"warn":    Warn,
+	"reject":  Reject,
 	"listen":  Listen,
 	"install": Install,
 	"init":    Init,
@@ -40,6 +48,7 @@ var prefixes = [...]string{
 	ansi.Color("[***error***]", "black+B:red"),
 	ansi.Color("[**blocked**]", "255+Bb:165"),
 	ansi.Color("[**warning**]", "red:yellow+h"),
+	ansi.Color("[ rejection ]", "125+b:208"),
 	ansi.Color("[ listening ]", "black:cyan+h"),
 	/*      */ "[ installed ]",
 	/*      */ "[initialized]",
@@ -79,6 +88,10 @@ func (logger *Logger) Warn(format string, v ...interface{}) {
 	out(logger.level, Warn, format, v...)
 }
 
+func (logger *Logger) Reject(format string, v ...interface{}) {
+	out(logger.level, Reject, format, v...)
+}
+
 func (logger *Logger) Listen(format string, v ...interface{}) {
 	out(logger.level, Listen, format, v...)
 }
@@ -113,6 +126,10 @@ func MustBlocked(format string, v ...interface{}) {
 
 func MustWarn(format string, v ...interface{}) {
 	out(max, Warn, format, v...)
+}
+
+func MustReject(format string, v ...interface{}) {
+	out(max, Reject, format, v...)
 }
 
 func MustListen(format string, v ...interface{}) {
