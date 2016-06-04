@@ -79,10 +79,10 @@ func out(loggerLevel, messageLevel int, format string, v ...interface{}) {
 	}
 }
 
-// Level returns a logger instance's log level.
+// Level returns a logger instance's log level if logger level allows.
 func (logger *Logger) Level() int { return logger.level }
 
-// SetLevel sets a logger instance's log level.
+// SetLevel sets a logger instance's log level if logger level allows.
 func (logger *Logger) SetLevel(level int) error {
 	if level > Debug || level < Silent {
 		return fmt.Errorf("logger level must be >= %d and < %d", Silent, max)
@@ -91,52 +91,52 @@ func (logger *Logger) SetLevel(level int) error {
 	return nil
 }
 
-// Error logs an error.
+// Error logs an error if logger level allows.
 func (logger *Logger) Error(format string, v ...interface{}) {
 	out(logger.level, Error, format, v...)
 }
 
-// Blocked logs a blocked message.
+// Blocked logs a blocked message if logger level allows.
 func (logger *Logger) Blocked(format string, v ...interface{}) {
 	out(logger.level, Blocked, format, v...)
 }
 
-// Warn logs a warning.
+// Warn logs a warning if logger level allows.
 func (logger *Logger) Warn(format string, v ...interface{}) {
 	out(logger.level, Warn, format, v...)
 }
 
-// Reject logs a rejection.
+// Reject logs a rejection if logger level allows.
 func (logger *Logger) Reject(format string, v ...interface{}) {
 	out(logger.level, Reject, format, v...)
 }
 
-// Listen logs a listener message.
+// Listen logs a listener message if logger level allows.
 func (logger *Logger) Listen(format string, v ...interface{}) {
 	out(logger.level, Listen, format, v...)
 }
 
-// Install logs an install message.
+// Install logs an install message if logger level allows.
 func (logger *Logger) Install(format string, v ...interface{}) {
 	out(logger.level, Install, format, v...)
 }
 
-// Init logs an initialization message.
+// Init logs an initialization message if logger level allows.
 func (logger *Logger) Init(format string, v ...interface{}) {
 	out(logger.level, Init, format, v...)
 }
 
-// Request logs a request.
+// Request logs a request if logger level allows.
 func (logger *Logger) Request(format string, v ...interface{}) {
 	out(logger.level, Request, format, v...)
 }
 
-// Info logs an info message.
+// Info logs an info message if logger level allows.
 func (logger *Logger) Info(format string, v ...interface{}) {
 	out(logger.level, Info, format, v...)
 }
 
-// Debug logs a debug message.
+// Debug logs a debug message if logger level allows.
 func (logger *Logger) Debug(format string, v ...interface{}) {
 	out(logger.level, Debug, format, v...)
 }
