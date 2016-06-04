@@ -45,8 +45,8 @@ var LogLevel = map[string]int{
 
 var prefixes = [...]string{
 	"",
-	ansi.Color("[***error***]", "black+B:red"),
-	ansi.Color("[**blocked**]", "255+Bb:165"),
+	ansi.Color("[***error***]", "black:red"),
+	ansi.Color("[**blocked**]", "255+b:165"),
 	ansi.Color("[**warning**]", "red:yellow+h"),
 	ansi.Color("[ rejection ]", "125+b:208"),
 	ansi.Color("[ listening ]", "black:cyan+h"),
