@@ -14,29 +14,30 @@ import (
 )
 
 const (
-	// No log output at all.
+	// Silent logs no output at all.
 	Silent = iota
-	// Only errors are logged.
+	// Error logs only errors.
 	Error = iota
-	// Blocking calls and lower are logged.
+	// Blocked logs blocking calls and lower.
 	Blocked = iota
-	// Warnings and lower are logged.
+	// Warn logs warnings and lower.
 	Warn = iota
-	// Rejections (e.g., in a firewall) and lower are logged.
+	// Reject logs rejections (e.g., in a firewall) and lower.
 	Reject = iota
-	// Listeners and lower are logged.
+	// Listen logs listeners and lower.
 	Listen = iota
-	// Install notifications and lower are logged.
+	// Install logs install notifications and lower.
 	Install = iota
-	// Initialization notifications and lower are logged.
+	// Init logs initialization notifications and lower.
 	Init = iota
-	// Incoming requests and lower are logged.
+	// Request logs incoming requests and lower.
 	Request = iota
-	// Info output and lower are logged.
+	// Info logs info output and lower.
 	Info = iota
-	// All log output is shown.
+	// Debug logs all log output.
 	Debug = iota
-	max   = iota
+
+	max = iota
 )
 
 // Logger only outputs log messages that are equal or lower than its log level.
@@ -197,7 +198,6 @@ func New(level int) (*Logger, error) {
 	l := new(Logger)
 	if err := l.SetLevel(level); err != nil {
 		return nil, err
-	} else {
-		return l, nil
 	}
+	return l, nil
 }
