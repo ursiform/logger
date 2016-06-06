@@ -16,24 +16,37 @@ import (
 const (
 	// Silent logs no output at all.
 	Silent = iota
+
 	// Error logs only errors.
 	Error = iota
+
 	// Blocked logs blocking calls and lower.
 	Blocked = iota
+
 	// Warn logs warnings and lower.
 	Warn = iota
+
 	// Reject logs rejections (e.g., in a firewall) and lower.
 	Reject = iota
+
 	// Listen logs listeners and lower.
 	Listen = iota
+
 	// Install logs install notifications and lower.
 	Install = iota
+
 	// Init logs initialization notifications and lower.
 	Init = iota
+
 	// Request logs incoming requests and lower.
 	Request = iota
+
 	// Info logs info output and lower.
 	Info = iota
+
+	// Verbose logs all verbose output and lower.
+	Verbose = iota
+
 	// Debug logs all log output.
 	Debug = iota
 
@@ -55,6 +68,7 @@ var LogLevel = map[string]int{
 	"init":    Init,
 	"request": Request,
 	"info":    Info,
+	"verbose": Verbose,
 	"debug":   Debug}
 
 var prefixes = [...]string{
@@ -68,6 +82,7 @@ var prefixes = [...]string{
 	/*      */ "[initialized]",
 	/*      */ "[  request  ]",
 	/*      */ "[information]",
+	/*      */ "[  verbose  ]",
 	/*      */ "[   debug   ]"}
 
 func out(loggerLevel, messageLevel int, format string, v ...interface{}) {
@@ -137,6 +152,11 @@ func (l *Logger) Info(format string, v ...interface{}) {
 	out(l.level, Info, format, v...)
 }
 
+// Verbose logs a verbose message if logger level allows.
+func (l *Logger) Verbose(format string, v ...interface{}) {
+	out(l.level, Verbose, format, v...)
+}
+
 // Debug logs a debug message if logger level allows.
 func (l *Logger) Debug(format string, v ...interface{}) {
 	out(l.level, Debug, format, v...)
@@ -185,6 +205,11 @@ func MustRequest(format string, v ...interface{}) {
 // MustInfo logs an info message.
 func MustInfo(format string, v ...interface{}) {
 	out(max, Info, format, v...)
+}
+
+// MustVerbose logs a verbose message.
+func MustVerbose(format string, v ...interface{}) {
+	out(max, Verbose, format, v...)
 }
 
 // MustDebug logs a debug message.
