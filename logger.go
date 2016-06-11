@@ -23,6 +23,9 @@ const (
 	// Blocked logs blocking calls and lower.
 	Blocked = iota
 
+	// Unblocked logs all unblocked notifications and lower.
+	Unblocked = iota
+
 	// Warn logs warnings and lower.
 	Warn = iota
 
@@ -44,9 +47,6 @@ const (
 	// Info logs info output and lower.
 	Info = iota
 
-	// Verbose logs all verbose output and lower.
-	Verbose = iota
-
 	// Debug logs all log output.
 	Debug = iota
 
@@ -58,23 +58,24 @@ type Logger struct{ level int }
 
 // LogLevel translates human-readable log level names to their int values.
 var LogLevel = map[string]int{
-	"silent":  Silent,
-	"error":   Error,
-	"blocked": Blocked,
-	"warn":    Warn,
-	"reject":  Reject,
-	"listen":  Listen,
-	"install": Install,
-	"init":    Init,
-	"request": Request,
-	"info":    Info,
-	"verbose": Verbose,
-	"debug":   Debug}
+	"silent":    Silent,
+	"error":     Error,
+	"blocked":   Blocked,
+	"unblocked": Unblocked,
+	"warn":      Warn,
+	"reject":    Reject,
+	"listen":    Listen,
+	"install":   Install,
+	"init":      Init,
+	"request":   Request,
+	"info":      Info,
+	"debug":     Debug}
 
 var prefixes = [...]string{
 	"",
 	ansi.Color("[***error***]", "black:red"),
 	ansi.Color("[**blocked**]", "255+b:165"),
+	ansi.Color("[*unblocked*]", "255+b:165"),
 	ansi.Color("[**warning**]", "red:yellow+h"),
 	ansi.Color("[ rejection ]", "125+b:208"),
 	ansi.Color("[ listening ]", "black:cyan+h"),
@@ -82,7 +83,6 @@ var prefixes = [...]string{
 	/*      */ "[initialized]",
 	/*      */ "[  request  ]",
 	/*      */ "[information]",
-	/*      */ "[  verbose  ]",
 	/*      */ "[   debug   ]"}
 
 func out(loggerLevel, messageLevel int, format string, v ...interface{}) {
@@ -115,6 +115,11 @@ func (l *Logger) Error(format string, v ...interface{}) {
 // Blocked logs a blocked message if logger level allows.
 func (l *Logger) Blocked(format string, v ...interface{}) {
 	out(l.level, Blocked, format, v...)
+}
+
+// Unblocked logs an unblocked notification if logger level allows.
+func (l *Logger) Unblocked(format string, v ...interface{}) {
+	out(l.level, Unblocked, format, v...)
 }
 
 // Warn logs a warning if logger level allows.
@@ -152,11 +157,6 @@ func (l *Logger) Info(format string, v ...interface{}) {
 	out(l.level, Info, format, v...)
 }
 
-// Verbose logs a verbose message if logger level allows.
-func (l *Logger) Verbose(format string, v ...interface{}) {
-	out(l.level, Verbose, format, v...)
-}
-
 // Debug logs a debug message if logger level allows.
 func (l *Logger) Debug(format string, v ...interface{}) {
 	out(l.level, Debug, format, v...)
@@ -170,6 +170,11 @@ func MustError(format string, v ...interface{}) {
 // MustBlocked logs a blocked message.
 func MustBlocked(format string, v ...interface{}) {
 	out(max, Blocked, format, v...)
+}
+
+// MustUnblocked logs an unblocked message.
+func MustUnblocked(format string, v ...interface{}) {
+	out(max, Unblocked, format, v...)
 }
 
 // MustWarn logs a warning.
@@ -205,11 +210,6 @@ func MustRequest(format string, v ...interface{}) {
 // MustInfo logs an info message.
 func MustInfo(format string, v ...interface{}) {
 	out(max, Info, format, v...)
-}
-
-// MustVerbose logs a verbose message.
-func MustVerbose(format string, v ...interface{}) {
-	out(max, Verbose, format, v...)
 }
 
 // MustDebug logs a debug message.
